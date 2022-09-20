@@ -342,26 +342,29 @@ namespace Adrenak.BRW {
         /// length of the array 
         /// </summary>
         /// <param name="bytes"></param>
-        public void WriteByteArray(byte[] bytes) {
+        public BytesWriter WriteByteArray(byte[] bytes) {
             WriteInt(bytes.Length);
             WriteBytes(bytes);
+            return this;
         }
 
         /// <summary>
         /// Writes a byte array to the internal byte list
         /// </summary>
         /// <param name="block"></param>
-        public void WriteBytes(byte[] block) {
+        public BytesWriter WriteBytes(byte[] block) {
             foreach (var b in block)
                 m_Bytes.Add(b);
+            return this;
         }
 
         /// <summary>
         /// Writes a byte to the internal byte list
         /// </summary>
         /// <param name="b"></param>
-        public void WriteByte(byte b) {
+        public BytesWriter WriteByte(byte b) {
             m_Bytes.Add(b);
+            return this;
         }
 
         /// <summary>
@@ -369,9 +372,10 @@ namespace Adrenak.BRW {
         /// </summary>
         /// <param name="index"></param>
         /// <param name="b"></param>
-        public void OverwriteByte(int index, byte b) {
+        public BytesWriter OverwriteByte(int index, byte b) {
             try {
                 m_Bytes[index] = b;
+                return this;
             }
             catch {
                 throw;
@@ -383,10 +387,11 @@ namespace Adrenak.BRW {
         /// </summary>
         /// <param name="index"></param>
         /// <param name="bytes"></param>
-        public void OverwriteBytes(int index, byte[] bytes) {
+        public BytesWriter OverwriteBytes(int index, byte[] bytes) {
             try {
                 for (int i = index; i < index + bytes.Length; i++)
                     OverwriteByte(i, bytes[i - index]);
+                return this;
             }
             catch {
                 throw;
