@@ -80,7 +80,7 @@ namespace Adrenak.BRW {
         /// </summary>
         /// <returns></returns>
         public Int64[] ReadLongArray() {
-            var len = ReadLong();
+            var len = ReadInt();
             var result = new Int64[len];
 
             for (int i = 0; i < result.Length; i++)
@@ -130,7 +130,7 @@ namespace Adrenak.BRW {
             var result = new Double[len];
 
             for (int i = 0; i < result.Length; i++)
-                result[i] = ReadShort();
+                result[i] = ReadDouble();
             return result;
         }
 
@@ -149,6 +149,19 @@ namespace Adrenak.BRW {
         public string ReadString() {
             var len = ReadInt();
             return Encoding.UTF8.GetString(ReadBytes(len));
+        }
+
+        /// <summary>
+        /// Attempts to return a string array at the current cursor position
+        /// </summary>
+        /// <returns></returns>
+        public string[] ReadStringArray() {
+            var len = ReadInt();
+            var result = new string[len];
+
+            for (int i = 0; i < result.Length; i++)
+                result[i] = ReadString();
+            return result;
         }
 
         // Unity types

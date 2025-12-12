@@ -1,6 +1,6 @@
 {
 	"name": "com.adrenak.brw",
-	"version": "1.0.1",
+	"version": "1.2.0",
 	"displayName": "Adrenak.BRW: Byte Reader Writer",
 	"description": "Byte reading and writing utilities for common C# and Unity types. ",
 	"unity": "2018.4",

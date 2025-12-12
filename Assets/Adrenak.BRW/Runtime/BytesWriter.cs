@@ -172,6 +172,19 @@ namespace Adrenak.BRW {
             return this;
         }
 
+        /// <summary>
+        /// Writes a string array to the internal byte list
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public BytesWriter WriteStringArray(string[] array) {
+            WriteInt(array.Length);
+
+            foreach (var e in array)
+                WriteString(e);
+            return this;
+        }
+
         // Unity types
         /// <summary>
         /// Writes a Vector3 to the internal byte list
