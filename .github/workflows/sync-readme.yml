@@ -1,0 +1,72 @@
+name: Sync README
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'README.md'
+  workflow_dispatch:
+
+env:
+  SUBDIRECTORY_PATH: Assets/Adrenak.BRW
+
+jobs:
+  sync-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check if README needs update
+        id: check-readme
+        run: |
+          ROOT_README="README.md"
+          SUB_README="${{ env.SUBDIRECTORY_PATH }}/README.md"
+          
+          if [ ! -f "$ROOT_README" ]; then
+            echo "Root README.md not found. Exiting."
+            exit 1
+          fi
+          
+          if [ ! -f "$SUB_README" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "Subdirectory README.md does not exist. Will create it."
+          elif ! cmp -s "$ROOT_README" "$SUB_README"; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "README.md files differ. Will update subdirectory README."
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "README.md files are identical. No update needed."
+          fi
+
+      - name: Copy README to subdirectory
+        if: steps.check-readme.outputs.needs_update == 'true'
+        run: |
+          mkdir -p "${{ env.SUBDIRECTORY_PATH }}"
+          cp README.md "${{ env.SUBDIRECTORY_PATH }}/README.md"
+          echo "Copied README.md to ${{ env.SUBDIRECTORY_PATH }}/"
+
+      - name: Commit and push changes
+        if: steps.check-readme.outputs.needs_update == 'true'
+        run: |
+          git add "${{ env.SUBDIRECTORY_PATH }}/README.md"
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: sync README.md to ${{ env.SUBDIRECTORY_PATH }}/"
+            git push origin master
+            echo "Committed and pushed README.md update."
+          fi
